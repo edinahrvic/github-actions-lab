@@ -1,16 +1,25 @@
-name: Bez Kesa
-
-on: workflow_dispatch
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Instaliraj zavisnosti (bez kesa)
+      
+      # OVDJE IDE KOD ZA KEŠIRANJE
+      - name: Keširaj node_modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm
+
+      # Nakon keša ide instalacija zavisnosti
+      - name: Instaliraj zavisnosti
         run: npm ci
+        
       - name: Pokreni testove
         run: npm test
