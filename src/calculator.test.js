@@ -1,3 +1,6 @@
+test('opis testa', () => {
+  expect(1 + 1).toBe(2);
+});
 const { add, subtract, multiply } = require('./calculator');
 test('add: 2 + 3 = 5', () => {
  expect(add(2, 3)).toBe(5);
