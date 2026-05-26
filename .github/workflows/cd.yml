@@ -9,17 +9,22 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-app
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   test:
     name: Testiranje
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./moj-node-app
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
+          cache-dependency-path: ./moj-node-app/package-lock.json
       - run: npm ci
       - run: npm test
 
@@ -51,7 +56,8 @@ jobs:
       - name: Build i push image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./moj-node-app
+          file: ./moj-node-app/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
